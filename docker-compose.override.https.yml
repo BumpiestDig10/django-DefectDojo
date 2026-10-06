@@ -3,13 +3,13 @@ services:
   nginx:
     environment:
       USE_TLS: 'true'
-      GENERATE_TLS_CERTIFICATE: 'true'
-    ports:
-      - target: 8443
-        published: ${DD_TLS_PORT:-8443}
-        protocol: tcp
-        mode: host
+      GENERATE_TLS_CERTIFICATE: 'false'
+    volumes:
+      - ./ssl/defect.crt:/etc/nginx/ssl/nginx.crt:ro
+      - ./ssl/defect.key:/etc/nginx/ssl/nginx.key:ro
+      - ./nginx/nginx_TLS.conf:/etc/nginx/nginx_TLS.conf:ro
   uwsgi:
     environment:
-      DD_SESSION_COOKIE_SECURE: 'True'
-      DD_CSRF_COOKIE_SECURE: 'True'
+      DD_SECURE_PROXY_SSL_HEADER: 'HTTP_X_FORWARDED_PROTO,https'
+      DD_SESSION_COOKIE_SECURE: 'true'
+      DD_CSRF_COOKIE_SECURE: 'true'
